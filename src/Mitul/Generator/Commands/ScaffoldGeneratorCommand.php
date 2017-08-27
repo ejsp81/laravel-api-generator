@@ -54,11 +54,11 @@ class ScaffoldGeneratorCommand extends BaseCommand
         $modelGenerator = new ModelGenerator($this->commandData);
         $modelGenerator->generate();
 
-        $requestGenerator = new RequestGenerator($this->commandData);
-        $requestGenerator->generate();
+        //$requestGenerator = new RequestGenerator($this->commandData);
+        //$requestGenerator->generate();
 
-        $repositoryGenerator = new RepositoryGenerator($this->commandData);
-        $repositoryGenerator->generate();
+        //$repositoryGenerator = new RepositoryGenerator($this->commandData);
+       //$repositoryGenerator->generate();
 
         $repoControllerGenerator = new ViewControllerGenerator($this->commandData);
         $repoControllerGenerator->generate();

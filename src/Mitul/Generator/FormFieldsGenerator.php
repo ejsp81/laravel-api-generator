@@ -6,11 +6,11 @@ use Illuminate\Support\Str;
 
 class FormFieldsGenerator
 {
-    //added bootstrap default class to the label
-  public static function generateLabel($field)
+       //added bootstrap default class to the label
+ public static function generateLabel($field)
     {
         $label = Str::title(str_replace('_', ' ', $field['fieldName']));
-        $template = "{!! Form::label('\$FIELD_NAME\$', '\$FIELD_NAME_TITLE\$:', ['class' => 'form-control-label $FIELD_NAME_TITLE$']) !!}";
+        $template = "{!! Form::label('\$FIELD_NAME\$', '\$FIELD_NAME_TITLE\$:', ['class' => 'col-md-4 control-label \$FIELD_NAME_TITLE\$']) !!}";
         $template = str_replace('$FIELD_NAME_TITLE$', $label, $template);
         $template = str_replace('$FIELD_NAME$', $field['fieldName'], $template);
         return $template;
@@ -30,11 +30,8 @@ class FormFieldsGenerator
     public static function text($templateData, $field)
     {
         $textField = self::generateLabel($field);
-
-        $textField .= "\n\t{!! Form::text('\$FIELD_NAME\$', null, ['class' => 'form-control']) !!}";
-
+        $textField .="\n\t{!! Form::text('\$FIELD_NAME\$', null, ['class' => 'form-control ']) !!}" ;
         $templateData = str_replace('$FIELD_INPUT$', $textField, $templateData);
-
         $templateData = self::replaceFieldVars($templateData, $field);
 
         return $templateData;

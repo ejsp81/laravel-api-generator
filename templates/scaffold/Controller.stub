@@ -1,24 +1,42 @@
 <?php namespace $NAMESPACE_CONTROLLER$;
 
+use Validator;
 use $NAMESPACE_REQUEST$;
 use $NAMESPACE_REQUEST$\Create$MODEL_NAME$Request;
 use $NAMESPACE_REQUEST$\Update$MODEL_NAME$Request;
-use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
 use Flash;
+use Session;
+use Redirect;
+use $NAMESPACE_CONTROLLER$\Controller;
 use $BASE_CONTROLLER$ as AppBaseController;
 use Response;
+use $NAMESPACE_MODEL$\$MODEL_NAME$;
+use Yajra\Datatables\Facades\Datatables;
 
-class $MODEL_NAME$Controller extends AppBaseController
+class $MODEL_NAME$Controller extends Controller
 {
 
-	/** @var  $MODEL_NAME$Repository */
-	private $$MODEL_NAME_CAMEL$Repository;
-
-	function __construct($MODEL_NAME$Repository $$MODEL_NAME_CAMEL$Repo)
+	private $groupUrl='';
+	private $routeIndex = '$MODEL_NAME_PLURAL_CAMEL$.index';
+	public function __construct()
 	{
-		$this->$MODEL_NAME_CAMEL$Repository = $$MODEL_NAME_CAMEL$Repo;
+		$this->routeIndex=$this->groupUrl .'.$MODEL_NAME_PLURAL_CAMEL$.index';
+		$this->middleware('auth');
 	}
 
+	/**
+	 * Get a validator for an incoming registration request.
+	 *
+	 * @param  Request $request
+	 * @return void
+	 */
+	protected function validator($data)
+	{
+		return validator::make($data, $MODEL_NAME$::$rules);
+
+	}
+
+	
 	/**
 	 * Display a listing of the $MODEL_NAME$.
 	 *
@@ -26,11 +44,28 @@ class $MODEL_NAME$Controller extends AppBaseController
 	 */
 	public function index()
 	{
-		$$MODEL_NAME_PLURAL_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->$RENDER_TYPE$;
-
-		return view('$MODEL_NAME_PLURAL_CAMEL$.index')
-			->with('$MODEL_NAME_PLURAL_CAMEL$', $$MODEL_NAME_PLURAL_CAMEL$);
+		//$$MODEL_NAME_PLURAL_CAMEL$ = $MODEL_NAME$::all();
+		//return view('$MODEL_NAME_PLURAL_CAMEL$/index2', compact('$MODEL_NAME_PLURAL_CAMEL$'));
+		return view('$MODEL_NAME_PLURAL_CAMEL$/index');
 	}
+
+	/**
+	 * Retorna json para Datatable.
+	 *
+	 * @return json
+	 */
+	public function getData()
+	{
+		$model = $MODEL_NAME$::select([$FIELDS$])
+						->get();
+		return Datatables::collection($model)
+			->addColumn('action', function($model){
+				$ruta = route('$MODEL_NAME_PLURAL_CAMEL$.edit', [ 'PREFIJO_ID'=>$model->PREFIJO_ID ]);
+				return parent::buttonEdit($ruta).
+					parent::buttonDelete($model, 'MODEL_ID', 'MODEL_DESCRIPCION', '$MODEL_NAME_PLURAL_CAMEL$');
+			})->make(true);
+	}
+
 
 	/**
 	 * Show the form for creating a new $MODEL_NAME$.
@@ -49,15 +84,9 @@ class $MODEL_NAME$Controller extends AppBaseController
 	 *
 	 * @return Response
 	 */
-	public function store(Create$MODEL_NAME$Request $request)
+	public function store()
 	{
-		$input = $request->all();
-
-		$$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->create($input);
-
-		Flash::success('$MODEL_NAME$ saved successfully.');
-
-		return redirect(route('$MODEL_NAME_PLURAL_CAMEL$.index'));
+		parent::storeModel($MODEL_NAME$::class,  $this->routeIndex);
 	}
 
 	/**
@@ -67,18 +96,7 @@ class $MODEL_NAME$Controller extends AppBaseController
 	 *
 	 * @return Response
 	 */
-	public function show($id)
-	{
-		$$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->find($id);
-
-		if(empty($$MODEL_NAME_CAMEL$))
-		{
-			Flash::error('$MODEL_NAME$ not found');
-
-			return redirect(route('$MODEL_NAME_PLURAL_CAMEL$.index'));
-		}
-
-		return view('$MODEL_NAME_PLURAL_CAMEL$.show')->with('$MODEL_NAME_CAMEL$', $$MODEL_NAME_CAMEL$);
+	public function show($MODEL_NAME$ $$MODEL_NAME_PLURAL_CAMEL$){
 	}
 
 	/**
@@ -88,18 +106,9 @@ class $MODEL_NAME$Controller extends AppBaseController
 	 *
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit($MODEL_NAME$ $$MODEL_NAME_PLURAL_CAMEL$)
 	{
-		$$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->find($id);
-
-		if(empty($$MODEL_NAME_CAMEL$))
-		{
-			Flash::error('$MODEL_NAME$ not found');
-
-			return redirect(route('$MODEL_NAME_PLURAL_CAMEL$.index'));
-		}
-
-		return view('$MODEL_NAME_PLURAL_CAMEL$.edit')->with('$MODEL_NAME_CAMEL$', $$MODEL_NAME_CAMEL$);
+		return view('$MODEL_NAME_PLURAL_CAMEL$.edit',['$MODEL_NAME_CAMEL$'=>$$MODEL_NAME_PLURAL_CAMEL$]);
 	}
 
 	/**
@@ -110,22 +119,9 @@ class $MODEL_NAME$Controller extends AppBaseController
 	 *
 	 * @return Response
 	 */
-	public function update($id, Update$MODEL_NAME$Request $request)
+	public function update($ID)
 	{
-		$$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->find($id);
-
-		if(empty($$MODEL_NAME_CAMEL$))
-		{
-			Flash::error('$MODEL_NAME$ not found');
-
-			return redirect(route('$MODEL_NAME_PLURAL_CAMEL$.index'));
-		}
-
-		$this->$MODEL_NAME_CAMEL$Repository->updateRich($request->all(), $id);
-
-		Flash::success('$MODEL_NAME$ updated successfully.');
-
-		return redirect(route('$MODEL_NAME_PLURAL_CAMEL$.index'));
+		parent::updateModel($ID, $MODEL_NAME$::class,  $this->routeIndex);
 	}
 
 	/**
@@ -135,21 +131,8 @@ class $MODEL_NAME$Controller extends AppBaseController
 	 *
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy($ID)
 	{
-		$$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->find($id);
-
-		if(empty($$MODEL_NAME_CAMEL$))
-		{
-			Flash::error('$MODEL_NAME$ not found');
-
-			return redirect(route('$MODEL_NAME_PLURAL_CAMEL$.index'));
-		}
-
-		$this->$MODEL_NAME_CAMEL$Repository->delete($id);
-
-		Flash::success('$MODEL_NAME$ deleted successfully.');
-
-		return redirect(route('$MODEL_NAME_PLURAL_CAMEL$.index'));
+		parent::destroyModel($ID, $MODEL_NAME$::class, $this->routeIndex);
 	}
 }

@@ -111,6 +111,10 @@ class CommandData
             '$MODEL_NAME_PLURAL$'       => $this->modelNamePlural,
 
             '$MODEL_NAME_PLURAL_CAMEL$' => $this->modelNamePluralCamel,
+            '$NAMESPACE_MODEL$'          =>  'SGH\Models',
+            '$NAMESPACE_CONTROLLER$'     => 'SGH\Http\Controllers',
+            '$NAMESPACE_REQUEST$'        =>  'SGH\Http\Requests',
+            '$PRIMARY_KEY$'              => 'PREFIJO_ID',
         ]);
 
         if ($this->tableName) {
@@ -153,7 +157,8 @@ class CommandData
 
             '$API_VERSION$'              => Config::get('generator.api_version', 'v1'),
 
-            '$PRIMARY_KEY$'              => 'id',
+            '$PRIMARY_KEY$'              => 'PREFIJO_ID',
+            
         ];
     }
 }

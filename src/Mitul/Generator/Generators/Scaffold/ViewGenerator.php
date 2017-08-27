@@ -9,6 +9,8 @@ use Mitul\Generator\FormFieldsGenerator;
 use Mitul\Generator\Generators\GeneratorProvider;
 use Mitul\Generator\Utils\GeneratorUtils;
 
+
+
 class ViewGenerator implements GeneratorProvider
 {
     /** @var  CommandData */
@@ -35,12 +37,14 @@ class ViewGenerator implements GeneratorProvider
 
         $this->commandData->commandObj->comment("\nViews created: ");
         $this->generateFields();
-        $this->generateShowFields();
+        //$this->generateShowFields();
         $this->generateTable();
         $this->generateIndex();
-        $this->generateShow();
+        $this->generateIndex2();
+       // $this->generateShow();
         $this->generateCreate();
         $this->generateEdit();
+        $this->generateModal();
     }
 
     private function generateFields()
@@ -204,6 +208,20 @@ class ViewGenerator implements GeneratorProvider
         $this->commandData->commandObj->info('create.blade.php created');
     }
 
+    private function generateModal()
+    {
+        $templateData = $this->commandData->templatesHelper->getTemplate('modal.blade', $this->viewsPath);
+
+        $templateData = GeneratorUtils::fillTemplate($this->commandData->dynamicVars, $templateData);
+
+        $fileName = 'modal.blade.php';
+
+        $path = $this->path.$fileName;
+
+        $this->commandData->fileHelper->writeFile($path, $templateData);
+        $this->commandData->commandObj->info('modal.blade.php created');
+    }
+
     private function generateEdit()
     {
         $templateData = $this->commandData->templatesHelper->getTemplate('edit.blade', $this->viewsPath);
@@ -217,4 +235,29 @@ class ViewGenerator implements GeneratorProvider
         $this->commandData->fileHelper->writeFile($path, $templateData);
         $this->commandData->commandObj->info('edit.blade.php created');
     }
+
+     private function generateIndex2()
+    {
+        $templateData = $this->commandData->templatesHelper->getTemplate('index2.blade', $this->viewsPath);
+
+        $templateData = GeneratorUtils::fillTemplate($this->commandData->dynamicVars, $templateData);
+
+        if ($this->commandData->paginate) {
+            $paginateTemplate = $this->commandData->templatesHelper->getTemplate('paginate.blade', 'scaffold/views');
+
+            $paginateTemplate = GeneratorUtils::fillTemplate($this->commandData->dynamicVars, $paginateTemplate);
+
+            $templateData = str_replace('$PAGINATE$', $paginateTemplate, $templateData);
+        } else {
+            $templateData = str_replace('$PAGINATE$', '', $templateData);
+        }
+
+        $fileName = 'index2.blade.php';
+
+        $path = $this->path.$fileName;
+
+        $this->commandData->fileHelper->writeFile($path, $templateData);
+        $this->commandData->commandObj->info('index2.blade.php created');
+    }
+
 }

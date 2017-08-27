@@ -1,4 +1,5 @@
 <!-- $FIELD_NAME_TITLE$ Field -->
-<div class="form-group col-sm-6 col-lg-4">
+<div class="form-group  {{ $errors->has('$FIELD_NAME$') ? ' has-error' : '' }}">
     $FIELD_INPUT$
+	@include('widgets.forms.alerta',['name'=>'$FIELD_NAME$'])
 </div>

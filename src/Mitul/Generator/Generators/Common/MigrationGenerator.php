@@ -41,7 +41,7 @@ class MigrationGenerator implements GeneratorProvider
 
     private function generateFieldsStr()
     {
-        $fieldsStr = "\$table->increments('id');\n";
+        $fieldsStr = "\$table->increments('PREFIJO_ID')->comment('Valor autonumérico, llave primaria de la tabla.');\n";
 
         foreach ($this->commandData->inputFields as $field) {
             $fieldsStr .= SchemaGenerator::createField($field['fieldInput']);
@@ -51,7 +51,7 @@ class MigrationGenerator implements GeneratorProvider
             $fieldsStr .= "\t\t\t\$table->rememberToken();\n";
         }
 
-        $fieldsStr .= "\t\t\t\$table->timestamps();";
+       // $fieldsStr .= "\t\t\t\$table->timestamps();";
 
         if ($this->commandData->useSoftDelete) {
             $fieldsStr .= "\n\t\t\t\$table->softDeletes();";
